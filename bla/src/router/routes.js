@@ -2,9 +2,12 @@
 const routes = [
   {
     path: '/',
-    component: () => import('layouts/MainLayout.vue'),
+    component: () => import('layouts/BLALayout.vue'),
     children: [
-      { path: '', component: () => import('pages/Index.vue') }
+      { path: '', component: () => import('pages/Index.vue') },
+      { path: 'programming', component: () => import('pages/ProgrammingIndex.vue') },
+      { path: 'mathIndex', component: () => import('pages/math/Index.vue') },
+      { path: 'mathNaturalNumbers', component: () => import('pages/math/NaturalNumbers.vue') },
     ]
   },
 
