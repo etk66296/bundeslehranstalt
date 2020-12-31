@@ -13,9 +13,11 @@
     "@quasar/extras": "^1.0.0",
     "axios": "^0.18.1",
     "core-js": "^3.6.5",
+    "jqmath": "^0.4.9",
     "phaser": "^3.50.1",
     "quasar": "^1.0.0",
-    "vue-i18n": "^8.0.0"
+    "vue-i18n": "^8.0.0",
+    "vue-mathjax": "0.0.11"
   },
   "devDependencies": {
     "@quasar/app": "^2.0.0",
