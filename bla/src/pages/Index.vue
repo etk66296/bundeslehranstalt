@@ -10,7 +10,7 @@
     <q-card>
       <q-card-section class="q-ma-xs">
         <div class="q-pa-md q-gutter-lg">
-          <q-btn size="xl" color="positive" icon="highlight" label="Physik" tag="a" to="physics"/>
+          <q-btn size="xl" color="positive" icon="highlight" label="Physik" tag="a" to="physicsIndex"/>
         </div>
       </q-card-section>
     </q-card>

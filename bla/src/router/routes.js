@@ -8,6 +8,8 @@ const routes = [
       { path: 'programming', component: () => import('pages/ProgrammingIndex.vue') },
       { path: 'mathIndex', component: () => import('pages/math/Index.vue') },
       { path: 'mathNaturalNumbers', component: () => import('pages/math/NaturalNumbers.vue') },
+      { path: 'physicsIndex', component: () => import('pages/physics/Index.vue') },
+      { path: 'homogeneousTranslation', component: () => import('pages/physics/newtonianMechanics/HomogeneousTranslation.vue') }
     ]
   },
 

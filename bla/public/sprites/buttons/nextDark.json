@@ -1,0 +1,51 @@
+{
+	"textures": [
+		{
+			"image": "nextDark.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 256,
+				"h": 192
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "idlebutton",
+					"frame": {"x":0,"y":0,"w":256,"h":64},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":256,"h":64},
+          "sourceSize": {"w":256,"h":64},
+					"anchor": {"x":0.5,"y":0.5}
+        },
+        {
+					"filename": "hoveredbutton",
+					"frame": {"x":0,"y":64,"w":256,"h":64},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":256,"h":64},
+          "sourceSize": {"w":256,"h":64},
+					"anchor": {"x":0.5,"y":0.5}
+				},
+        {
+          "filename": "pressedbutton",
+					"frame": {"x":0,"y":128,"w":256,"h":64},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":256,"h":64},
+          "sourceSize": {"w":256,"h":64},
+					"anchor": {"x":0.5,"y":0.5}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "etk66296",
+  	"version": "1.0",
+  	"image": "nextDark.png",
+  	"format": "RGBA8888",
+    "size": {"w":256,"h":192},
+  	"scale": "1",
+  	"smartupdate": ""
+	}
+}

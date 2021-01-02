@@ -1,0 +1,42 @@
+{
+	"textures": [
+		{
+			"image": "nextDark.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 96,
+				"h": 76
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "moving_0000",
+					"frame": {"x":0,"y":0,"w":96,"h":38},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":96,"h":38},
+          "sourceSize": {"w":96,"h":76},
+					"anchor": {"x":0.5,"y":0.5}
+        },
+        {
+					"filename": "moving_0001",
+					"frame": {"x":0,"y":38,"w":96,"h":38},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":96,"h":38},
+          "sourceSize": {"w":96,"h":76},
+					"anchor": {"x":0.5,"y":0.5}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "etk66296",
+  	"version": "1.0",
+  	"image": "2cvCar.png",
+  	"format": "RGBA8888",
+    "size": {"w":96,"h":76},
+  	"scale": "1",
+  	"smartupdate": ""
+	}
+}
