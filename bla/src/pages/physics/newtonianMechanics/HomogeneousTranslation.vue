@@ -61,6 +61,7 @@ export default {
       this.load.image('arrowYHead', 'tiles/vectorYArrowHeadTile.png')
       this.load.image('origin', 'tiles/vectorOrigin.png')
       this.load.atlas('nextButton', 'sprites/buttons/nextDark.png', 'sprites/buttons/nextDark.json')
+      this.load.atlas('indexButton', 'sprites/buttons/indexDark.png', 'sprites/buttons/nextDark.json')
     }
 
     let cartesian = null
@@ -70,9 +71,13 @@ export default {
     let startTimeText = null
     let stopTimeText = null
     let infoText = null
+    let start 
+    let finish
 
     let scaleFacotorProtrait = 0.035
     let scaleFacotorLandscape = 0.04
+
+    let myTmpGameObjects = []
 
     function create () {
       this.cameras.main.setBackgroundColor(0x121212)
@@ -107,8 +112,8 @@ export default {
       // <-- create the x axis arrow
 
       // start line and finish line -->
-      var start = this.add.rectangle(startPos.x, startPos.y, 8, 64, 0x6666ff);
-      var finish = this.add.rectangle(finishPos.x, finishPos.y, 8, 64, 0x9966ff);
+      start = this.add.rectangle(startPos.x, startPos.y, 8, 64, 0x6666ff);
+      finish = this.add.rectangle(finishPos.x, finishPos.y, 8, 64, 0x9966ff);
       // <-- start line and finish line
 
       this.physics.add.collider(cartesian, car)
@@ -135,10 +140,19 @@ export default {
     let cartesianOrigin = 0
     let x = 0
     let y = 0
+    let xAxis
+    let xAxisArrow
+    let yAxis
+    let yAxisArrow
+    let velocity 
+    let translation
+    let velocityText
+    let translationText
 
     let runFinalAnimation = false
 
     function update (time, delta) {
+
       if (car.body.touching.down && car.body.velocity.x != carSpeed && step === 0) {
         car.setVelocityX(carSpeed)
       }
@@ -150,7 +164,7 @@ export default {
         ts = (time * 0.001).toFixed(3)
         xs = Math.floor(car.x)
         xStartText = this.add.text(startPos.x - 10, startPos.y + 40, 'xs=' + String(xs) + 'm', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
-        startTimeText.setText('te=' + ts + 's')
+        startTimeText.setText('ts=' + ts + 's')
       }
       // <-- start passed
 
@@ -160,11 +174,11 @@ export default {
         xe = Math.floor(car.x)
         te = (time * 0.001).toFixed(3)
         xStopText = this.add.text(finishPos.x - 10, finishPos.y + 40, 'xe=' + String(xe) + 'm', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px' : config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
-        stopTimeText.setText('ts=' + te + 's')
+        stopTimeText.setText('te=' + te + 's')
       }
       // <-- stop passed
 
-      if ((car.x >= (finishPos.x + 64) && step === 0) || (car.x >= (finishPos.x + 64) && step >= 5)) {
+      if ((car.x >= (finishPos.x + 64) && step === 0) || (car.x >= (finishPos.x + 64) && step === 5)) {
         step++
         car.setVelocityX(0)
         car.anims.stop()
@@ -202,7 +216,7 @@ export default {
             case 2:
               infoText.setText([
                 'Mit Δt und Δx lässt sich',
-                'die mittlere Geschwindigkeit definieren.',
+                'die Mittlere Geschwindigkeit definieren.',
                 '',
                 '     Δx',
                 'v = ―――',
@@ -237,24 +251,24 @@ export default {
 
 
               cartesianOrigin = this.add.image(startPos.x, config.height * 0.55, 'origin')
-              let xAxis = this.add.group({
+              xAxis = this.add.group({
                 key: 'arrowXSegment',
                 repeat: isPortrait ? Math.floor(config.width / 32) - 10 : Math.floor(config.width / 32) - 20,
                 setXY: { x: startPos.x, y: config.height * 0.55, stepX: 32 }
               })
-              let xAxisArrow = this.add.image(isPortrait ? (Math.floor(config.width / 32) - 10) * 32 + startPos.x : (Math.floor(config.width / 32) - 20) * 32 + startPos.x, config.height * 0.55, 'arrowXHead')
-              let yAxis = this.add.group({
+              xAxisArrow = this.add.image(isPortrait ? (Math.floor(config.width / 32) - 10) * 32 + startPos.x : (Math.floor(config.width / 32) - 20) * 32 + startPos.x, config.height * 0.55, 'arrowXHead')
+              yAxis = this.add.group({
                 key: 'arrowYSegment',
                 repeat: isPortrait ? Math.floor(config.height / 32) - 18 : Math.floor(config.height / 32) - 12,
                 setXY: { x: startPos.x, y: Math.floor(config.height * 0.55), stepY: -32 }
               })
-              let yAxisArrow = this.add.image(startPos.x, isPortrait ? (Math.floor(config.height / 32) - 18) * (-32) + Math.floor(config.height * 0.55) : (Math.floor(config.height / 32) - 11) * (-32) + Math.floor(config.height * 0.55), 'arrowYHead')
+              yAxisArrow = this.add.image(startPos.x, isPortrait ? (Math.floor(config.height / 32) - 18) * (-32) + Math.floor(config.height * 0.55) : (Math.floor(config.height / 32) - 11) * (-32) + Math.floor(config.height * 0.55), 'arrowYHead')
 
               // legend
-              let velocity = this.add.rectangle(isPortrait ? 20 : 30, isPortrait ? 50 : 20 , 16, 16, 0xffff00)
-              let translation = this.add.rectangle(isPortrait ? 20 : 30, isPortrait ? 80 : 50 , 16, 16, 0x00ff00)
-              let velocityText = this.add.text(isPortrait ? 40 : 60, isPortrait ? 35 : 10, 'Geschwindigkeit' , { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
-              let translationText = this.add.text(isPortrait ? 40 : 60, isPortrait ? 65 : 40, 'Verschiebung' , { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+              velocity = this.add.rectangle(isPortrait ? 20 : 30, isPortrait ? 50 : 20 , 16, 16, 0xffff00)
+              translation = this.add.rectangle(isPortrait ? 20 : 30, isPortrait ? 80 : 50 , 16, 16, 0x00ff00)
+              velocityText = this.add.text(isPortrait ? 40 : 60, isPortrait ? 35 : 10, 'Geschwindigkeit' , { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+              translationText = this.add.text(isPortrait ? 40 : 60, isPortrait ? 65 : 40, 'Verschiebung' , { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
 
             break
             case 5:
@@ -262,6 +276,72 @@ export default {
               finishPassed = false
               car.setVelocityX(carSpeed)
               runFinalAnimation = true
+              nextButton.removeInteractive()
+              this.children.remove(nextButton)
+              break
+            case 6:
+              // final screen
+              myTmpGameObjects.forEach(item => {
+                this.children.remove(item)
+              })
+              this.children.remove(nextButton)
+              this.children.remove(infoText)
+              this.children.remove(startTimeText)
+              this.children.remove(stopTimeText)
+              this.children.remove(xStartText)
+              this.children.remove(xStopText)
+              this.children.remove(car)
+              xAxis.getChildren().forEach(item => {
+                this.children.remove(item)
+
+              })
+              this.children.remove(xAxisArrow)
+              yAxis.getChildren().forEach(item => {
+                this.children.remove(item)
+
+              })
+              cartesian.getChildren().forEach(item => {
+                this.children.remove(item)
+
+              })
+              this.children.remove(yAxisArrow)
+              this.children.remove(velocity )
+              this.children.remove(translation)
+              this.children.remove(velocityText)
+              this.children.remove(translationText)
+              this.children.remove(yAxisArrow)
+              this.children.remove(velocity )
+              this.children.remove(translation)
+              this.children.remove(velocityText)
+              this.children.remove(translationText)
+              this.children.remove(cartesianOrigin)
+              this.children.remove(start)
+              this.children.remove(finish)
+              let indexButton = this.add.sprite(Math.floor(config.width / 2), config.height - 72, 'indexButton', 'idlebutton').setInteractive({ useHandCursor: true })
+              indexButton.on('pointerover', (pointer) => {
+                indexButton.setFrame('hoveredbutton')
+              })
+              indexButton.on('pointerout', (pointer) => {
+                indexButton.setFrame('idlebutton')
+              })
+              indexButton.on('pointerdown', (pointer) => {
+                indexButton.setFrame('pressedbutton')
+              })
+              indexButton.on('pointerup', (pointer) => {
+                window.history.go(-1)
+              })
+              let wikilinkButton = this.add.image(Math.floor(config.width * 0.5), Math.floor(config.height * 0.5) - 128, 'wiki').setInteractive({ useHandCursor: true })
+              wikilinkButton.on('pointerup', (pointer) => {
+                window.location.replace("https://de.wikipedia.org/wiki/Gleichf%C3%B6rmige_Bewegung");
+              })
+              this.tweens.add({
+                targets: wikilinkButton,
+                alpha: { from: 0.5, to: 1 },
+                ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+                duration: 1200,
+                repeat: -1,            // -1: infinity
+                yoyo: true
+              })
               break
             default:
             break
@@ -272,16 +352,16 @@ export default {
       if (runFinalAnimation) {
         if (startPassed && !finishPassed) {
           y = isPortrait ? cartesianOrigin.y - (car.x - xs) : cartesianOrigin.y - (car.x - xs) * 0.5
-          this.add.rectangle(car.x,  cartesianOrigin.y + car.body.velocity.y * 100, 6, 5, 0xffff00)
-          this.add.rectangle(car.x,  y, 6, 6, 0x00ff00)
+          myTmpGameObjects.push(this.add.rectangle(car.x,  cartesianOrigin.y + car.body.velocity.y * 100, 6, 5, 0xffff00))
+          myTmpGameObjects.push(this.add.rectangle(car.x,  y, 6, 6, 0x00ff00))
           x = car.x
         }
         if (car.x >= finishPos.x) {
           runFinalAnimation = false
-           this.add.line(car.x, y + (cartesianOrigin.y - y) * 0.5, 0, 0, 0, cartesianOrigin.y - y + 20, 0xffffff)
-            this.add.text(car.x + 10, y + (cartesianOrigin.y - y) * 0.5, 'Δx', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
-            this.add.text(cartesianOrigin.x + (car.x - cartesianOrigin.x) * 0.5, cartesianOrigin.y + 10, 'Δt', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
-            this.add.text(Math.floor(car.x * 0.75), y - 120, ['     Δx', 'v = ――― = konstant', '     Δt'],  { font: isPortrait ? String(config.width * scaleFacotorProtrait)  + 'px' : config.height * scaleFacotorLandscape + 'px' })
+          myTmpGameObjects.push(this.add.line(car.x, y + (cartesianOrigin.y - y) * 0.5, 0, 0, 0, cartesianOrigin.y - y + 20, 0xffffff))
+          myTmpGameObjects.push(this.add.text(car.x + 10, y + (cartesianOrigin.y - y) * 0.5, 'Δx', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'}))
+          myTmpGameObjects.push(this.add.text(cartesianOrigin.x + (car.x - cartesianOrigin.x) * 0.5, cartesianOrigin.y + 10, 'Δt', { font: isPortrait ? config.width * scaleFacotorProtrait + 'px': config.height * scaleFacotorLandscape + 'px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'}))
+          myTmpGameObjects.push(this.add.text(cartesianOrigin.x + Math.floor((car.x - cartesianOrigin.x) * 0.35), y - 40, ['     Δx', 'v = ――― = konstant', '     Δt'],  { font: isPortrait ? String(config.width * scaleFacotorProtrait)  + 'px' : config.height * scaleFacotorLandscape + 'px' }))
         }
       }
     }
