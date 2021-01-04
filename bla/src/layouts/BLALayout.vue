@@ -1,6 +1,6 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <q-header elevated>
+    <!-- <q-header elevated>
       <q-toolbar>
         <q-btn
           flat
@@ -17,7 +17,7 @@
 
         <div></div>
       </q-toolbar>
-    </q-header>
+    </q-header> -->
 
     <q-drawer
       v-model="leftDrawerOpen"
@@ -36,9 +36,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <q-footer class="q-pa-xs">
+    <!-- <q-footer class="q-pa-xs">
       (Impressum)
-    </q-footer>  
+    </q-footer>   -->
   </q-layout>
 </template>
 
