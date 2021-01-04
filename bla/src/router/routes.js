@@ -9,7 +9,8 @@ const routes = [
       { path: 'mathIndex', component: () => import('pages/math/Index.vue') },
       { path: 'mathNaturalNumbers', component: () => import('pages/math/NaturalNumbers.vue') },
       { path: 'physicsIndex', component: () => import('pages/physics/Index.vue') },
-      { path: 'homogeneousTranslation', component: () => import('pages/physics/newtonianMechanics/HomogeneousTranslation.vue') }
+      { path: 'homogeneousTranslation', component: () => import('pages/physics/newtonianMechanics/HomogeneousTranslation.vue') },
+      { path: 'velocity', component: () => import('pages/physics/newtonianMechanics/CurrentVelocity.vue') }
     ]
   },
 

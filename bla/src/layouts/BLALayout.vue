@@ -1,23 +1,9 @@
 <template>
   <q-layout view="lHh Lpr lFf">
-    <!-- <q-header elevated>
-      <q-toolbar>
-        <q-btn
-          flat
-          dense
-          round
-          icon="menu"
-          aria-label="Menu"
-          @click="leftDrawerOpen = !leftDrawerOpen"
-        />
-
-        <q-toolbar-title>
-          Bundeslehranstalt
-        </q-toolbar-title>
-
-        <div></div>
-      </q-toolbar>
-    </q-header> -->
+    <q-header style="background-color: #121212;" class="">
+      <q-img :src=headerImage />
+      <div top="120" class="text-h6 absolute-top-left q-mt-sm q-ml-xl">Bundeslehranstalt</div>
+    </q-header>
 
     <q-drawer
       v-model="leftDrawerOpen"
@@ -36,9 +22,9 @@
     <q-page-container>
       <router-view />
     </q-page-container>
-    <!-- <q-footer class="q-pa-xs">
-      (Impressum)
-    </q-footer>   -->
+    <q-footer style="background-color: #121212;" class="">
+      <q-img :src=footerImage />
+    </q-footer>
   </q-layout>
 </template>
 
@@ -48,10 +34,19 @@ export default {
   components: {},
   data () {
     return {
-      leftDrawerOpen: false
+      leftDrawerOpen: false,
+      headerImage: "header.png",
+      footerImage: "footer.png"
     }
   },
   mounted () {
+    if (window.innerWidth >= window.innerHeight) {
+      this.headerImage = "header.png"
+      this.footerImage = "footer.png"
+    } else {
+      this.headerImage = "headerMobile.png"
+      this.footerImage = "footerMobile.png"
+    }
   }
 }
 </script>
