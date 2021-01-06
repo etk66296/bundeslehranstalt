@@ -1,0 +1,51 @@
+{
+	"textures": [
+		{
+			"image": "001.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 768,
+				"h": 256
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "deltaT_0000",
+					"frame": {"x":0,"y":0,"w":256,"h":256},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":768,"h":256},
+          "sourceSize": {"w":768,"h":256},
+					"anchor": {"x":0.5,"y":0.5}
+        },
+        {
+					"filename": "deltaT_0001",
+					"frame": {"x":256,"y":0,"w":256,"h":256},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":768,"h":256},
+          "sourceSize": {"w":768,"h":256},
+					"anchor": {"x":0.5,"y":0.5}
+        },
+        {
+					"filename": "deltaT_0002",
+					"frame": {"x":512,"y":0,"w":256,"h":256},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":768,"h":256},
+          "sourceSize": {"w":768,"h":256},
+					"anchor": {"x":0.5,"y":0.5}
+        }
+			]
+		}
+	],
+	"meta": {
+		"app": "etk66296",
+  	"version": "1.0",
+  	"image": "001.png",
+  	"format": "RGBA8888",
+    "size": {"w":768,"h":256},
+  	"scale": "1",
+  	"smartupdate": ""
+	}
+}
