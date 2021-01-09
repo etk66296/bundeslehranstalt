@@ -141,9 +141,9 @@ export default {
       drawCartesian(this, Math.floor(config.width * 0.0) + marginLeft, Math.floor(config.height * 0.4), Math.floor(config.width * 0.8 / 32) - 2, Math.floor(config.height * 0.4 / 32) - 2)
       
       // info text
-      infoText = this.add.text(config.width * 0.51, isPortrait ? config.height * 0.1 : config.height * 0.15, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.035)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+      infoText = this.add.text(config.width * 0.4, isPortrait ? config.height * 0.1 : config.height * 0.025, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.035)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText.setDepth(10000)
-      infoText.setText(['x sei die Position', 'des Helikopter'])
+      infoText.setText(['x sei die Position', 'des Helikopters'])
 
       infoText2 = this.add.text(config.width * 0.1, config.height * 0.55, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.03)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText2.setDepth(10000)
@@ -170,13 +170,28 @@ export default {
     }
     
     let measurepoints = []
+    let extraMeasurepoints = []
     
-    let virtualTime = 0
-    let trackHeli = (scene) => {
+    let virtualTimeX = 0
+    let rectCounterX = 0
+    let trackHeliX = (scene) => {
       // mark the heli translation
-      virtualTime += 0.2
-      measurepoints.push(scene.add.rectangle(virtualTime + marginLeft, Math.floor(cartesian.origin.y - heli.x * 0.125), 2, 2, 0x00ff00))
+      virtualTimeX += 0.3
+      // rectCounterX++
+      // if (rectCounterX % 5 === 0) {
+        measurepoints.push(scene.add.rectangle(virtualTimeX + marginLeft, Math.floor(cartesian.origin.y - heli.x * 0.2), 3, 3, 0x00ff00))
+      // }
     }
+    let virtualTimeV = 0
+    let rectCounterV = 0
+    let trackHeliV = (scene, currentSpeed) => {
+      virtualTimeV += 0.3
+      // rectCounterV++
+      // if (rectCounterV % 5 === 0) {
+        measurepoints.push(scene.add.rectangle(virtualTimeV + marginLeft, Math.floor(cartesian.origin.y - currentSpeed * 0.4), 3, 3, 0xffff00))
+      // }
+    }
+    
 
     let gui = null
     let camera1 = null
@@ -189,7 +204,7 @@ export default {
           heli.setVelocityX(heliCurrentSpeed)
           heli.setRotation(0.15)
           infoText.setText(['der Helikopter', 'beschleunigt in', 'Vorwärts-Richtung'])
-          trackHeli(this)
+          trackHeliX(this)
           if (heli.x >= Math.floor(config.width * 0.2)) {
             step++
           }
@@ -199,18 +214,25 @@ export default {
           heli.setRotation(-0.15)
           heli.setVelocityX(heliCurrentSpeed)
           infoText.setText(['er bremst ab', 'und beschleunigt', 'Rückwärts'])
-          trackHeli(this)
+          trackHeliX(this)
            if (heli.x <= (-1) * Math.floor(config.width * 0.05)) {
             step++
             heli.setRotation(0.1)
           }
         break
-        case 2:
+        case 2:heliCurrentSpeed++
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(0.15)
+          infoText.setText(['der Helikopter', 'beschleunigt in', 'Vorwärts-Richtung'])
+          trackHeliX(this)
+          if (heli.x >= Math.floor(config.width * 0.2)) {
+            step++
+          }
           heliCurrentSpeed++
           heli.setVelocityX(heliCurrentSpeed)
           heli.setRotation(0.15)
           infoText.setText(['und ...', 'wieder auf den', 'Bildschirm'])
-          trackHeli(this)
+          trackHeliX(this)
           if (heli.x >= Math.floor(config.width * 0.1)) {
             step++
             infoText.setText(['und ...', 'wieder auf den', 'Bildschirm'])
@@ -221,7 +243,7 @@ export default {
           heli.setRotation(-0.15)
           heli.setVelocityX(heliCurrentSpeed)
           infoText.setText(['langsaaaam!😄'])
-          trackHeli(this)
+          trackHeliX(this)
            if (heli.body.velocity.x <= 25) {
             infoText.setText(['weiter mit', 'konstanter', 'Geschwindigkeit'])
             step++
@@ -231,7 +253,7 @@ export default {
           }
           break
         case 4:
-          trackHeli(this)
+          trackHeliX(this)
            if (heli.x >= Math.floor(config.width * 0.5)) {
             infoText.setText(['uuund Stopp', 'Position halten'])
             step++
@@ -248,7 +270,7 @@ export default {
         break
         case 5:
           // wait for the timer event
-          trackHeli(this)
+          trackHeliX(this)
         break
         case 6:
           infoText.setText(['nimm dir kurz Zeit', 'um die Kurve', 'zu verstehen'])
@@ -269,10 +291,10 @@ export default {
           infoText.setText([])
           infoText2.setText([
             'Teilt man den gesamten Kurvenverlauf',
-            'in kleine Zeitabschnitte, lassen sich',
+            'in kleine Zeitabschnitte, nähern sich',
             'die darin liegenden Kurvenabschnitte',
-            'annähernd als aneinandergekettete',
-            'Geraden ansehen.'
+            'immer weiter aneinandergeketteten',
+            'Geraden an.'
           ])
         break
         case 8:
@@ -286,30 +308,43 @@ export default {
             'werden zu lassen:',
             '       Δx',
             'lim   ――― ',
-            'Δt➔∞  Δt'
+            'Δt➔0  Δt'
           ])
         break
         case 9:
           infoText.setText([])
           infoText2.setText([
-            'Mathematisch ist dies die Ableitung',
-            'nach der Zeit:',
-            '      Δx     dx',
-            'lim  ―――  = ――― = ẋ',
-            'Δt→∞  Δt     dt'
+            'Für den Kurvenverlauf erhält man',
+            'damit Werte, welche zu den',
+            'Zeitpunkten die Steigung der ',
+            'Veschiebungskurve beschreiben.',
+            '       Δx',
+            'lim   ――― ',
+            'Δt➔0  Δt'
           ])
         break
         case 10:
-          console.log(images[images.length - 1])
+          infoText.setText([])
+          infoText2.setText([
+            'es gilt:',
+            '      Δx     dx',
+            'lim  ―――  = ――― = ẋ = v(t)',
+            'Δt→0  Δt     dt',
+            'Mit einem Punkt über Buchstaben',
+            'wird in der Physik oft die',
+            'Ableitung nach der Zeit abgekürzt.'
+          ])
+        break
+        case 11:
           images[images.length - 1].setActive(false)
           images[images.length - 1].setVisible(false)
           this.children.remove(images[images.length - 1])
           step++
         break
-        case 11:
+        case 12:
           infoText.setText([
             ' dx(t)',
-            '――――――― = ẋ = v(t)',
+            '――――――― = ẋ(t) = v(t)',
             '  dt'
           ])
           infoText2.setText([
@@ -319,18 +354,176 @@ export default {
             'jeweiligen Zeitpunkt.'
           ])
         break
-        case 12:
+        case 13:
           infoText.setText([
             ' dx(t)',
-            '――――――― = ẋ = v(t)',
+            '――――――― = ẋ(t) = v(t)',
             '  dt'
           ])
           infoText2.setText([
             'Die erste Ableitung der Verschiebung',
             'x(t) nach der Zeit ist die',
-            'die momentante Geschwindigkeit'
+            'momentante Geschwindigkeit.'
           ])
         break
+        case 14:
+          images.forEach(item => {
+            this.children.remove(item)
+          })
+          measurepoints.forEach(item => {
+            this.children.remove(item)
+          })
+          
+          infoText.setText([])
+          infoText2.setText(['Ein weiterer Rundflug', 'mit Kurven für Verschiebung', 'und Momentangeschwindigkeit', 'verdeutlicht die zusammenhänge.'])
+          heliCurrentSpeed = 0
+          virtualTimeX = 0
+          rectCounterX = 0
+          cartesian.labelY.setText(['Verschiebung x(t)', 'Geschwindigkeit v(t)'])
+        break
+        case 15:
+          heliCurrentSpeed--
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(-0.15)
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          if (heli.x <= Math.floor(config.width * 0.1)) {
+            infoText2.setText([''])
+            step++
+          }
+        break
+        case 16:
+          heliCurrentSpeed++
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(0.15)
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          if (heli.x >= Math.floor(config.width * 0.35)) {
+            step++
+          }
+        break
+        case 17:
+          heliCurrentSpeed -= 2
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(-0.15)
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          if (heliCurrentSpeed <= 30) {
+            heliCurrentSpeed = 30
+            step++
+          }
+        break
+        case 18:
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(0.0)
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          timedEvent = this.time.delayedCall(4000, () => {
+            step++
+            timedEvent.remove(false)
+          }, [], this)
+          step++
+        break
+        case 19:
+          // just wait for the timer event
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+        break
+        case 20:
+          heliCurrentSpeed--
+          heli.setVelocityX(heliCurrentSpeed)
+          heli.setRotation(-0.15)
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          if (heliCurrentSpeed <= 0) {
+            heliCurrentSpeed = 0
+            heli.setRotation(0.0)
+            heli.setVelocityX(heliCurrentSpeed)
+            step++
+          }
+        break
+        case 21:
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+          timedEvent = this.time.delayedCall(4000, () => {
+            step++
+            timedEvent.remove(false)
+          }, [], this)
+          step++
+        break
+        case 22:
+          // just wait for the timer event
+          trackHeliX(this)
+          trackHeliV(this, heliCurrentSpeed)
+        break
+        case 23:
+          nextButton.setActive(true)
+          nextButton.setVisible(true)
+          step++
+        break
+        case 24:
+        break
+        case 25:
+          measurepoints.forEach(item => {
+            this.children.remove(item)
+          })
+          extraMeasurepoints.forEach(item => {
+            this.children.remove(item)
+          })
+          this.children.remove(nextButton)
+          this.children.remove(cartesian.origin)
+          this.children.remove(cartesian.xAxisSegments)
+          this.children.remove(cartesian.yAxisSegments)
+          this.children.remove(cartesian.xArrow)
+          this.children.remove(cartesian.yArrow)
+          this.children.remove(cartesian.labelX)
+          this.children.remove(cartesian.labelY)
+          this.children.remove(heli)
+          cartesian.xAxisSegments.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          cartesian.yAxisSegments.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          this.children.remove(infoText)
+          this.children.remove(infoText2)
+          let indexButton = this.add.sprite(Math.floor(config.width / 2), config.height - 72, 'indexButton', 'idlebutton').setInteractive({ useHandCursor: true })
+          indexButton.on('pointerover', (pointer) => {
+            indexButton.setFrame('hoveredbutton')
+          })
+          indexButton.on('pointerout', (pointer) => {
+            indexButton.setFrame('idlebutton')
+          })
+          indexButton.on('pointerdown', (pointer) => {
+            indexButton.setFrame('pressedbutton')
+          })
+          indexButton.on('pointerup', (pointer) => {
+            window.history.go(-1)
+          })
+          let wikilinkButton = this.add.image(Math.floor(config.width * 0.5), Math.floor(config.height * 0.5) - 128, 'wiki').setInteractive({ useHandCursor: true })
+          wikilinkButton.on('pointerup', (pointer) => {
+            window.location.replace("https://de.wikipedia.org/wiki/Geschwindigkeit");
+          })
+          this.tweens.add({
+            targets: wikilinkButton,
+            alpha: { from: 0.5, to: 1 },
+            ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+            duration: 1200,
+            repeat: -1,            // -1: infinity
+            yoyo: true
+          })
+          step++
+          break
+        case 26:
+          break
         default:
         break
       }
