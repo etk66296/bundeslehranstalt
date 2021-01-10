@@ -1,0 +1,42 @@
+{
+	"textures": [
+		{
+			"image": "ssbgt4.png",
+			"format": "RGBA8888",
+			"size": {
+				"w": 520,
+				"h": 109
+			},
+			"scale": 1,
+			"frames": [
+				{
+					"filename": "roll_0000",
+					"frame": {"x":0,"y":0,"w":260,"h":109},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":520,"h":190},
+          "sourceSize": {"w":520,"h":190},
+					"anchor": {"x":0.5,"y":0.5}
+        },
+        {
+					"filename": "roll_0001",
+					"frame": {"x":260,"y":0,"w":260,"h":109},
+          "rotated": false,
+          "trimmed": false,
+          "spriteSourceSize": {"x":0,"y":0,"w":520,"h":190},
+          "sourceSize": {"w":260,"h":190},
+					"anchor": {"x":0.5,"y":0.5}
+				}
+			]
+		}
+	],
+	"meta": {
+		"app": "etk66296",
+  	"version": "1.0",
+  	"image": "ssbgt4.png",
+  	"format": "RGBA8888",
+    "size": {"w":520,"h":109},
+  	"scale": "1",
+  	"smartupdate": ""
+	}
+}
