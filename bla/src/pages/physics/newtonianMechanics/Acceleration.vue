@@ -108,7 +108,7 @@ export default {
     let nextButton = null
     let step = 0
 
-    let acceleration = 0.05
+    let acceleration = 0.06
     let velocity = 0
     let translation = 0
     let elapsedTime = 0
@@ -152,7 +152,7 @@ export default {
       // info text
       infoText = this.add.text(config.width * 0.4, isPortrait ? config.height * 0.1 : config.height * 0.025, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.035)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText.setDepth(10000)
-      infoText.setText(['x sei die Position', 'des Helikopters'])
+      infoText.setText(['der Fahrer schiebt', 'den Gashebel nach vorne'])
 
       infoText2 = this.add.text(config.width * 0.1, config.height * 0.55, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.03)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText2.setDepth(10000)
@@ -184,69 +184,126 @@ export default {
     let virtualTimeX = 0
     let rectCounterX = 0
     let trackTrainX = (scene, currentPosition) => {
-      virtualTimeX += 0.3
+      virtualTimeX += 0.75
         measurepoints.push(scene.add.rectangle(virtualTimeX + marginLeft, Math.floor(cartesian.origin.y - currentPosition * 0.2), 3, 3, 0x00ff00))
     }
     let virtualTimeV = 0
     let rectCounterV = 0
     let trackTrainV = (scene, currentVelocity) => {
-      virtualTimeV += 0.3
+      virtualTimeV += 0.75
         measurepoints.push(scene.add.rectangle(virtualTimeV + marginLeft, Math.floor(cartesian.origin.y - currentVelocity * 0.4), 3, 3, 0xffff00))
     }
     let virtualTimeA = 0
     let rectCounterA = 0
     let trackTrainA = (scene, currentAcceleration) => {
-      virtualTimeA += 0.3
+      virtualTimeA += 0.75
         measurepoints.push(scene.add.rectangle(virtualTimeA + marginLeft, Math.floor(cartesian.origin.y - currentAcceleration * 0.4), 3, 3, 0x00ffff))
     }
     
 
-    let gui = null
-    let camera1 = null
     let timedEvent = null
 
     function update (time, delta) {
       switch(step) {
         case 0:
-          trackTrainA(this, acceleration * 4000)
-          acceleration -= 0.0002
-          elapsedTime = delta
-          velocity += acceleration * elapsedTime
-          tram.setVelocityX(velocity)
-          if (velocity > 90) {
-            velocity = 90
-            step++
-            acceleration = 0
-            tram.setVelocityX(velocity)
-          }
-        break
-        case 1:
-          trackTrainA(this, acceleration * 4000)
-          timedEvent = this.time.delayedCall(4000, () => {
-            step++
-            timedEvent.remove(false)
-          }, [], this)
-          step++
-        break
-        case 2:
-          trackTrainA(this, acceleration * 4000)
-          // wait for the timer event
-        break
-        case 3:
-          trackTrainA(this, acceleration * 4000)
+          trackTrainA(this, acceleration * 3000)
+          // trackTrainV(this, velocity)
+          // trackTrainX(this, tram.x)
           acceleration -= 0.0003
           elapsedTime = delta
           velocity += acceleration * elapsedTime
           tram.setVelocityX(velocity)
-          if (velocity <= 0) {
+          if (acceleration <= 0.01) {
+            acceleration = -0.045
             step++
-            velocity = 0
-            acceleration = 0
-            tram.stop()
-            tram.setVelocityX(velocity)
           }
         break
+        case 1:
+          infoText.setText(['volle Kraft', 'zurück'])
+          trackTrainA(this, acceleration * 3000)
+          // trackTrainV(this, velocity)
+          // trackTrainX(this, tram.x)
+          acceleration += 0.0001
+          elapsedTime = delta
+          velocity += acceleration * elapsedTime
+          tram.setVelocityX(velocity)
+          if (acceleration >= -0.02) {
+            acceleration = Math.abs(acceleration)
+            step++
+          }
+        break
+        case 2:
+          infoText.setText(['ein Halteprogramm', 'bremst konstant'])
+          trackTrainA(this, acceleration * 3000)
+          // trackTrainV(this, velocity)
+          // trackTrainX(this, tram.x)
+          elapsedTime = delta
+          velocity += acceleration * elapsedTime
+          tram.setVelocityX(velocity)
+          if (velocity >= 0) {
+            step++
+            acceleration = 0
+            velocity = 0
+            tram.setVelocityX(velocity)
+            tram.stop()
+          }
+        break
+        case 3:
+          infoText.setText(['und nochmal', 'volle Kraft voraus'])
+          nextButton.setActive(true)
+          nextButton.setVisible(true)
+        break
         case 4:
+          virtualTimeA = 0
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          measurepoints.forEach(item => {
+            this.children.remove(item)
+          })
+          acceleration = 0.07
+          step++
+        break
+        case 5:
+          infoText.setText([''])
+          trackTrainA(this, acceleration * 3000)
+          trackTrainV(this, velocity)
+          trackTrainX(this, tram.x)
+          acceleration -= 0.0003
+          elapsedTime = delta
+          velocity += acceleration * elapsedTime
+          tram.setVelocityX(velocity)
+          if (acceleration <= 0.01) {
+            acceleration = -0.045
+            step++
+          }
+        break
+        case 6:
+          trackTrainA(this, acceleration * 3000)
+          trackTrainV(this, velocity)
+          trackTrainX(this, tram.x)
+          acceleration += 0.00008
+          elapsedTime = delta
+          velocity += acceleration * elapsedTime
+          tram.setVelocityX(velocity)
+          if (acceleration >= -0.02) {
+            acceleration = Math.abs(acceleration)
+            step++
+          }
+        break
+        case 7:
+          trackTrainA(this, acceleration * 3000)
+          trackTrainV(this, velocity)
+          trackTrainX(this, tram.x)
+          elapsedTime = delta
+          velocity += acceleration * elapsedTime
+          tram.setVelocityX(velocity)
+          if (velocity >= 0) {
+            step++
+            acceleration = 0
+            velocity = 0
+            tram.setVelocityX(velocity)
+            tram.stop()
+          }
         break
         default:
         break
