@@ -75,21 +75,26 @@ export default {
 
     // cartesian -->
     let cartesian = {
+      length:  { x: 0, y: 0 },
       origin: null,
       xAxisSegments: null,
       yAxisSegments: null,
       xArrow: null,
       yArrow: null,
       labelX: 't',
-      labelY: 'x'
+      labelY: 'x',
+      legendY: []
     }
 
     let drawCartesian = (scene, x, y, lengthX, lengthY) => {
+      cartesian.length.x = lengthX
+      cartesian.length.y = lengthY
       cartesian.origin = scene.add.image(x, y, 'origin')
       cartesian.xArrow = scene.add.image(x + lengthX * 32, y, 'arrowXHead')
       cartesian.labelX = scene.add.text(x + lengthX * 32, y + 8, 'Zeit t' , { font: '16px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       cartesian.yArrow = scene.add.image(x, y + lengthY * (-32), 'arrowYHead')
-      cartesian.labelY = scene.add.text(x + 8, y + lengthY * (-32) - 16, 'Beschleunigung a(t)' , { font: '16px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+      cartesian.labelY = scene.add.text(x + 18, y + lengthY * (-32) - 16, 'Beschleunigung a(t)' , { font: '16px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+      cartesian.legendY.push(scene.add.rectangle(x + 12, y + lengthY * (-32) - 6, 8, 8, 0x00ffff))
       cartesian.xAxisSegments = scene.add.group({
         key: 'arrowXSegment',
         repeat: lengthX - 2,
@@ -127,7 +132,7 @@ export default {
       })
 
       // tram
-      tram = this.physics.add.sprite(0, Math.floor(config.height * 0.6), 'tram')
+      tram = this.physics.add.sprite(80, Math.floor(config.height * 0.6), 'tram')
       tram.body.allowGravity = false
       tram.play('roll')
       tram.setVelocityX(50)
@@ -206,6 +211,7 @@ export default {
     function update (time, delta) {
       switch(step) {
         case 0:
+          infoText.setText(['die Leistung der Antriebe', 'reicht nicht aus', 'um die Beschleunigung', 'konstant zu halten'])
           trackTrainA(this, acceleration * 3000)
           // trackTrainV(this, velocity)
           // trackTrainX(this, tram.x)
@@ -219,15 +225,17 @@ export default {
           }
         break
         case 1:
-          infoText.setText(['volle Kraft', 'zurück'])
+          infoText.setText(['...volle Kraft zurück', '', 'auch hier'])
           trackTrainA(this, acceleration * 3000)
           // trackTrainV(this, velocity)
           // trackTrainX(this, tram.x)
-          acceleration += 0.0001
+          if (velocity <= 0) {
+            acceleration += 0.0001
+          }
           elapsedTime = delta
           velocity += acceleration * elapsedTime
           tram.setVelocityX(velocity)
-          if (acceleration >= -0.02) {
+          if (acceleration >= -0.03) {
             acceleration = Math.abs(acceleration)
             step++
           }
@@ -249,11 +257,15 @@ export default {
           }
         break
         case 3:
-          infoText.setText(['und nochmal', 'volle Kraft voraus'])
+          infoText.setText(['nimm dir kurz Zeit', 'für die Beschleunigungskurve'])
           nextButton.setActive(true)
           nextButton.setVisible(true)
         break
         case 4:
+          infoText.setText(['und nochmal', 'volle Kraft voraus'])
+          cartesian.labelY = this.add.text(cartesian.origin.x + 18, cartesian.origin.y + cartesian.length.y * (-32) - 16, ['Beschleunigung a(t)', 'Geschwindigkeit v(t)', 'Verschiebung x(t)'] , { font: '16px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+          cartesian.legendY.push(this.add.rectangle(cartesian.origin.x + 12, cartesian.origin.y + cartesian.length.y * (-32) - 6 + 18, 8, 8, 0xffff00))
+          cartesian.legendY.push(this.add.rectangle(cartesian.origin.x + 12, cartesian.origin.y + cartesian.length.y * (-32) - 6 + 40, 8, 8, 0x00ff00))
           virtualTimeA = 0
           nextButton.setActive(false)
           nextButton.setVisible(false)
@@ -264,7 +276,6 @@ export default {
           step++
         break
         case 5:
-          infoText.setText([''])
           trackTrainA(this, acceleration * 3000)
           trackTrainV(this, velocity)
           trackTrainX(this, tram.x)
@@ -278,6 +289,7 @@ export default {
           }
         break
         case 6:
+          infoText.setText([''])
           trackTrainA(this, acceleration * 3000)
           trackTrainV(this, velocity)
           trackTrainX(this, tram.x)
