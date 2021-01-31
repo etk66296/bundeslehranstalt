@@ -117,6 +117,9 @@ export default {
     let velocity = 0
     let translation = 0
     let elapsedTime = 0
+    let rail = null
+    let voltageLine = null
+    let powerPole = null
 
     function create () {
       this.cameras.main.setBackgroundColor(0x121212)
@@ -134,19 +137,19 @@ export default {
       // tram
       tram = this.physics.add.sprite(80, Math.floor(config.height * 0.6), 'tram')
       tram.body.allowGravity = false
-      tram.play('roll')
+      // tram.play('roll')
       tram.setVelocityX(50)
-      let rail = this.add.group({
+      rail = this.add.group({
         key: 'rail',
         repeat: Math.floor(config.width / 32 + 1),
         setXY: { x: 0, y: Math.floor(config.height * 0.6 + 109 * 0.5 + 4), stepX: 32 }
       })
-      let voltageLine = this.add.group({
+      voltageLine = this.add.group({
         key: 'voltageLine',
         repeat: Math.floor(config.width / 64 + 1),
         setXY: { x: 0, y: Math.floor(config.height * 0.6 - 109 * 0.5 - 4), stepX: 64 }
       })
-      let powerPole = this.add.group({
+      powerPole = this.add.group({
         key: 'powerPole',
         repeat: 4,
         setXY: { x: 32, y: Math.floor(config.height * 0.6 - 4), stepX: Math.floor(config.width / 4) }
@@ -155,11 +158,11 @@ export default {
       drawCartesian(this, Math.floor(config.width * 0.0) + marginLeft, Math.floor(config.height * 0.4), Math.floor(config.width * 0.8 / 32) - 2, Math.floor(config.height * 0.4 / 32) - 2)
       
       // info text
-      infoText = this.add.text(config.width * 0.4, isPortrait ? config.height * 0.1 : config.height * 0.025, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.035)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+      infoText = this.add.text(config.width * 0.4, isPortrait ? config.height * 0.1 : config.height * 0.025, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.03)) + 'px' : String(Math.floor(config.height * 0.035)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText.setDepth(10000)
       infoText.setText(['der Fahrer schiebt', 'den Gashebel nach vorne'])
 
-      infoText2 = this.add.text(config.width * 0.1, config.height * 0.55, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.04)) + 'px' : String(Math.floor(config.height * 0.03)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
+      infoText2 = this.add.text(config.width * 0.1, config.height * 0.55, [''] , { font: isPortrait ? String(Math.floor(config.width * 0.03)) + 'px' : String(Math.floor(config.height * 0.03)) + 'px' , fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
       infoText2.setDepth(10000)
       
 
@@ -215,7 +218,7 @@ export default {
           trackTrainA(this, acceleration * 3000)
           // trackTrainV(this, velocity)
           // trackTrainX(this, tram.x)
-          acceleration -= 0.0003
+          acceleration -= 0.00026
           elapsedTime = delta
           velocity += acceleration * elapsedTime
           tram.setVelocityX(velocity)
@@ -225,7 +228,7 @@ export default {
           }
         break
         case 1:
-          infoText.setText(['...volle Kraft zurück', '', 'auch hier'])
+          infoText.setText(['... und zurück'])
           trackTrainA(this, acceleration * 3000)
           // trackTrainV(this, velocity)
           // trackTrainX(this, tram.x)
@@ -257,12 +260,13 @@ export default {
           }
         break
         case 3:
-          infoText.setText(['nimm dir kurz Zeit', 'für die Beschleunigungskurve'])
+          infoText.setText([''])
           nextButton.setActive(true)
           nextButton.setVisible(true)
         break
         case 4:
           infoText.setText(['und nochmal', 'volle Kraft voraus'])
+          this.children.remove(cartesian.labelY)
           cartesian.labelY = this.add.text(cartesian.origin.x + 18, cartesian.origin.y + cartesian.length.y * (-32) - 16, ['Beschleunigung a(t)', 'Geschwindigkeit v(t)', 'Verschiebung x(t)'] , { font: '16px', fontFamily: 'Georgia, "Goudy Bookletter 1911", Times, serif'})
           cartesian.legendY.push(this.add.rectangle(cartesian.origin.x + 12, cartesian.origin.y + cartesian.length.y * (-32) - 6 + 18, 8, 8, 0xffff00))
           cartesian.legendY.push(this.add.rectangle(cartesian.origin.x + 12, cartesian.origin.y + cartesian.length.y * (-32) - 6 + 40, 8, 8, 0x00ff00))
@@ -289,20 +293,23 @@ export default {
           }
         break
         case 6:
-          infoText.setText([''])
+          infoText.setText(['erst konstant bremsen', 'und dann rückwärts', 'beschleuningen'])
           trackTrainA(this, acceleration * 3000)
           trackTrainV(this, velocity)
           trackTrainX(this, tram.x)
-          acceleration += 0.00008
+          if (velocity <= 0) {
+            acceleration += 0.00009
+          }
           elapsedTime = delta
           velocity += acceleration * elapsedTime
           tram.setVelocityX(velocity)
-          if (acceleration >= -0.02) {
+          if (acceleration >= -0.035) {
             acceleration = Math.abs(acceleration)
             step++
           }
         break
         case 7:
+          infoText.setText(['konstant bremsen'])
           trackTrainA(this, acceleration * 3000)
           trackTrainV(this, velocity)
           trackTrainX(this, tram.x)
@@ -317,6 +324,113 @@ export default {
             tram.stop()
           }
         break
+        case 8:
+          infoText.setText([''])
+          nextButton.setActive(true)
+          nextButton.setVisible(true)
+          step++
+          infoText.setBackgroundColor(0x333333)
+        break
+        case 9:
+          infoText.setText([
+            '  dv(t) ',
+            ' ――――――― = v̇(t) = a(t) ',
+            '   dt ',
+            ' Die Beschleunigung ist die ',
+            ' Ableitung der Geschwindigkeit ',
+            ' nach der Zeit. '
+          ])
+        break
+        case 10:
+          infoText.setText([
+            ' Verschiebung, Geschwindigkeit ',
+            ' und Beschleunigung ',
+            ' hängen wie folgt zusammen: ',
+            '         dv(t)         ',
+            ' a(t) = ――――――― = v̇(t) ',
+            '          dt           ',
+            '      d²x(t) ',
+            ' = ―――――――――――― = ẍ(t) ',
+            '       dt² '
+          ])
+        break
+        case 11:
+          infoText.setText([
+            ' Allein aus der Verschiebung x(t) ',
+            ' lässt sich somit die ',
+            ' Geschwindigkeit v(t) und die ',
+            ' Beschleunigung a(t) ablesen '
+          ])
+        break
+        case 12:
+          infoText.setText([''])
+          infoText.setBackgroundColor(0)
+        break
+        case 13:
+          measurepoints.forEach(item => {
+            this.children.remove(item)
+          })
+          this.children.remove(nextButton)
+          this.children.remove(cartesian.origin)
+          this.children.remove(cartesian.xAxisSegments)
+          this.children.remove(cartesian.yAxisSegments)
+          this.children.remove(cartesian.xArrow)
+          this.children.remove(cartesian.yArrow)
+          this.children.remove(cartesian.labelX)
+          this.children.remove(cartesian.labelY)
+          this.children.remove(tram)
+          cartesian.xAxisSegments.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          cartesian.yAxisSegments.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          this.children.remove(infoText)
+          this.children.remove(infoText2)
+          cartesian.legendY.forEach(item => {
+            this.children.remove(item)
+          })
+          rail.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          voltageLine.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          powerPole.getChildren().forEach(item => {
+            this.children.remove(item)
+          })
+          nextButton.setActive(false)
+          nextButton.setVisible(false)
+          this.children.remove(nextButton)
+          let indexButton = this.add.sprite(Math.floor(config.width / 2), config.height - 72, 'indexButton', 'idlebutton').setInteractive({ useHandCursor: true })
+          indexButton.on('pointerover', (pointer) => {
+            indexButton.setFrame('hoveredbutton')
+          })
+          indexButton.on('pointerout', (pointer) => {
+            indexButton.setFrame('idlebutton')
+          })
+          indexButton.on('pointerdown', (pointer) => {
+            indexButton.setFrame('pressedbutton')
+          })
+          indexButton.on('pointerup', (pointer) => {
+            window.history.go(-1)
+          })
+          let wikilinkButton = this.add.image(Math.floor(config.width * 0.5), Math.floor(config.height * 0.5) - 128, 'wiki').setInteractive({ useHandCursor: true })
+          wikilinkButton.on('pointerup', (pointer) => {
+            window.location.replace("https://de.wikipedia.org/wiki/Beschleunigung");
+          })
+          this.tweens.add({
+            targets: wikilinkButton,
+            alpha: { from: 0.5, to: 1 },
+            ease: 'Linear',       // 'Cubic', 'Elastic', 'Bounce', 'Back'
+            duration: 1200,
+            repeat: -1,            // -1: infinity
+            yoyo: true
+          })
+          step++
+          break
+        case 26:
+          break
         default:
         break
       }
